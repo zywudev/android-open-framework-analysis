@@ -171,7 +171,9 @@ public final class Dispatcher {
       for (Iterator<AsyncCall> i = readyAsyncCalls.iterator(); i.hasNext(); ) {
         AsyncCall asyncCall = i.next();
 
+        // 正在运行的异步请求超过64
         if (runningAsyncCalls.size() >= maxRequests) break; // Max capacity.
+        // 同一个host下的异步请求超过5个
         if (runningCallsForHost(asyncCall) >= maxRequestsPerHost) continue; // Host max capacity.
 
         i.remove();

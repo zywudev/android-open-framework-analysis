@@ -107,6 +107,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
     Call call = realChain.call();
     EventListener eventListener = realChain.eventListener();
 
+    //
     StreamAllocation streamAllocation = new StreamAllocation(client.connectionPool(),
         createAddress(request.url()), call, eventListener, callStackTrace);
     this.streamAllocation = streamAllocation;
@@ -114,6 +115,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
     int followUpCount = 0;
     Response priorResponse = null;
     while (true) {
+      // 取消
       if (canceled) {
         streamAllocation.release(true);
         throw new IOException("Canceled");
@@ -122,6 +124,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
       Response response;
       boolean releaseConnection = true;
       try {
+        // 继续执行下一个Interceptor，也就是 BridgeInterceptor
         response = realChain.proceed(request, streamAllocation, null, null);
         releaseConnection = false;
       } catch (RouteException e) {
@@ -219,13 +222,13 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
       boolean requestSendStarted, Request userRequest) {
     streamAllocation.streamFailed(e);
 
-    // The application layer has forbidden retries.
+    // 应用层禁止失败重试
     if (!client.retryOnConnectionFailure()) return false;
 
-    // We can't send the request body again.
+    // 请求体不能再发送了
     if (requestSendStarted && requestIsUnrepeatable(e, userRequest)) return false;
 
-    // This exception is fatal.
+    //
     if (!isRecoverable(e, requestSendStarted)) return false;
 
     // No more routes to attempt.
@@ -241,19 +244,17 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
   }
 
   private boolean isRecoverable(IOException e, boolean requestSendStarted) {
-    // If there was a protocol problem, don't recover.
+    // 协议异常
     if (e instanceof ProtocolException) {
       return false;
     }
 
-    // If there was an interruption don't recover, but if there was a timeout connecting to a route
-    // we should try the next route (if there is one).
+    // 中断异常
     if (e instanceof InterruptedIOException) {
       return e instanceof SocketTimeoutException && !requestSendStarted;
     }
 
-    // Look for known client-side or negotiation errors that are unlikely to be fixed by trying
-    // again with a different route.
+    // SSL握手异常
     if (e instanceof SSLHandshakeException) {
       // If the problem was a CertificateException from the X509TrustManager,
       // do not retry.
@@ -261,6 +262,7 @@ public final class RetryAndFollowUpInterceptor implements Interceptor {
         return false;
       }
     }
+    // SSL握手未授权异常
     if (e instanceof SSLPeerUnverifiedException) {
       // e.g. a certificate pinning error.
       return false;

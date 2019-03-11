@@ -220,32 +220,32 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
         };
     }
 
-    final Dispatcher dispatcher;
+    final Dispatcher dispatcher;    // 调度器
     final @Nullable
-    Proxy proxy;
-    final List<Protocol> protocols;
-    final List<ConnectionSpec> connectionSpecs;
-    final List<Interceptor> interceptors;
-    final List<Interceptor> networkInterceptors;
+    Proxy proxy; // 代理
+    final List<Protocol> protocols;  // 协议
+    final List<ConnectionSpec> connectionSpecs;  // 传输层版本和连接协议
+    final List<Interceptor> interceptors;  // 拦截器
+    final List<Interceptor> networkInterceptors;  // 网络拦截器
     final EventListener.Factory eventListenerFactory;
-    final ProxySelector proxySelector;
-    final CookieJar cookieJar;
+    final ProxySelector proxySelector; // 代理选择器
+    final CookieJar cookieJar;  // cookie
     final @Nullable
-    Cache cache;
+    Cache cache;  // 缓存
     final @Nullable
-    InternalCache internalCache;
-    final SocketFactory socketFactory;
-    final SSLSocketFactory sslSocketFactory;
-    final CertificateChainCleaner certificateChainCleaner;
-    final HostnameVerifier hostnameVerifier;
-    final CertificatePinner certificatePinner;
-    final Authenticator proxyAuthenticator;
-    final Authenticator authenticator;
-    final ConnectionPool connectionPool;
-    final Dns dns;
-    final boolean followSslRedirects;
-    final boolean followRedirects;
-    final boolean retryOnConnectionFailure;
+    InternalCache internalCache;  // 内部缓存
+    final SocketFactory socketFactory;  // socket 工厂
+    final SSLSocketFactory sslSocketFactory;  // 安全套接层 socket 工厂，用于 https
+    final CertificateChainCleaner certificateChainCleaner; // 验证确认响应证书 适用 HTTPS 请求连接的主机名
+    final HostnameVerifier hostnameVerifier; // 主机名字验证
+    final CertificatePinner certificatePinner; // 证书链
+    final Authenticator proxyAuthenticator; // 代理身份验证
+    final Authenticator authenticator; // 本地身份验证
+    final ConnectionPool connectionPool;  // 连接池
+    final Dns dns;  // 域名
+    final boolean followSslRedirects;  // 安全套接层重定向
+    final boolean followRedirects;  // 本地重定向
+    final boolean retryOnConnectionFailure;  // 重试连接失败
     final int callTimeout;
     final int connectTimeout;
     final int readTimeout;
@@ -482,11 +482,11 @@ public class OkHttpClient implements Cloneable, Call.Factory, WebSocket.Factory 
     }
 
     public static final class Builder {
-        Dispatcher dispatcher;
+        Dispatcher dispatcher;          // 分发器：管理请求执行
         @Nullable
         Proxy proxy;
         List<Protocol> protocols;
-        List<ConnectionSpec> connectionSpecs;
+        List<ConnectionSpec> connectionSpecs;      // 传输层版本和连接协议
         final List<Interceptor> interceptors = new ArrayList<>();
         final List<Interceptor> networkInterceptors = new ArrayList<>();
         EventListener.Factory eventListenerFactory;
