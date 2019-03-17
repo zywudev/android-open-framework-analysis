@@ -182,23 +182,22 @@ public final class CacheStrategy {
 
     /** Returns a strategy to use assuming the request can use the network. */
     private CacheStrategy getCandidate() {
-      // No cached response.
+      // 1、没有缓存，直接返回包含网络请求的策略结果
       if (cacheResponse == null) {
         return new CacheStrategy(request, null);
       }
 
-      // Drop the cached response if it's missing a required handshake.
+      // 2、如果握手信息丢失，则返返回包含网络请求的策略结果
       if (request.isHttps() && cacheResponse.handshake() == null) {
         return new CacheStrategy(request, null);
       }
 
-      // If this response shouldn't have been stored, it should never be used
-      // as a response source. This check should be redundant as long as the
-      // persistence store is well-behaved and the rules are constant.
+      // 3、如果根据CacheControl参数有no-store，则不适用缓存，直接返回包含网络请求的策略结果
       if (!isCacheable(cacheResponse, request)) {
         return new CacheStrategy(request, null);
       }
 
+      // 4、如果缓存数据的CacheControl有no-cache指令或者需要向服务器端校验后决定是否使用缓存，则返回只包含网络请求的策略结果
       CacheControl requestCaching = request.cacheControl();
       if (requestCaching.noCache() || hasConditions(request)) {
         return new CacheStrategy(request, null);
@@ -222,7 +221,7 @@ public final class CacheStrategy {
       if (!responseCaching.mustRevalidate() && requestCaching.maxStaleSeconds() != -1) {
         maxStaleMillis = SECONDS.toMillis(requestCaching.maxStaleSeconds());
       }
-
+      // 5. 如果缓存在过期时间内则可以直接使用，则直接返回上次缓存
       if (!responseCaching.noCache() && ageMillis + minFreshMillis < freshMillis + maxStaleMillis) {
         Response.Builder builder = cacheResponse.newBuilder();
         if (ageMillis + minFreshMillis >= freshMillis) {
@@ -235,8 +234,7 @@ public final class CacheStrategy {
         return new CacheStrategy(null, builder.build());
       }
 
-      // Find a condition to add to the request. If the condition is satisfied, the response body
-      // will not be transmitted.
+      //6. 如果缓存过期，且有ETag等信息，则发送If-None-Match、If-Modified-Since等条件请求
       String conditionName;
       String conditionValue;
       if (etag != null) {
