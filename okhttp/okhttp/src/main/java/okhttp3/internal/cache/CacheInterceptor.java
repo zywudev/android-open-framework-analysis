@@ -79,8 +79,7 @@ public final class CacheInterceptor implements Interceptor {
             closeQuietly(cacheCandidate.body());
         }
 
-        // 3、如果当前网络不能使用（在CacheStrategy中详细解释网络不能用的情况），
-        // 而且没有缓存数据，则返回网络请求错误的结果
+        // 3、不进行网络请求，而且没有缓存数据，则返回网络请求错误的结果
         if (networkRequest == null && cacheResponse == null) {
             return new Response.Builder()
                     .request(chain.request())
@@ -93,7 +92,7 @@ public final class CacheInterceptor implements Interceptor {
                     .build();
         }
 
-        // 4、如果不需要网络请求，缓存数据可用，则直接返回缓存数据.
+        // 4、如果不进行网络请求，缓存数据可用，则直接返回缓存数据.
         if (networkRequest == null) {
             return cacheResponse.newBuilder()
                     .cacheResponse(stripBody(cacheResponse))

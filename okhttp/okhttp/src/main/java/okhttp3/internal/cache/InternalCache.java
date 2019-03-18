@@ -17,6 +17,7 @@ package okhttp3.internal.cache;
 
 import java.io.IOException;
 import javax.annotation.Nullable;
+
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -25,26 +26,23 @@ import okhttp3.Response;
  * okhttp3.Cache}.
  */
 public interface InternalCache {
-  @Nullable Response get(Request request) throws IOException;
+    // 获取缓存
+    @Nullable
+    Response get(Request request) throws IOException;
 
-  @Nullable CacheRequest put(Response response) throws IOException;
+    // 存入缓存
+    @Nullable
+    CacheRequest put(Response response) throws IOException;
 
-  /**
-   * Remove any cache entries for the supplied {@code request}. This is invoked when the client
-   * invalidates the cache, such as when making POST requests.
-   */
-  void remove(Request request) throws IOException;
+    // 移除缓存
+    void remove(Request request) throws IOException;
 
-  /**
-   * Handles a conditional request hit by updating the stored cache response with the headers from
-   * {@code network}. The cached response body is not updated. If the stored response has changed
-   * since {@code cached} was returned, this does nothing.
-   */
-  void update(Response cached, Response network);
+    // 更新缓存
+    void update(Response cached, Response network);
 
-  /** Track an conditional GET that was satisfied by this cache. */
-  void trackConditionalCacheHit();
+    // 跟踪一个满足缓存条件的GET请求
+    void trackConditionalCacheHit();
 
-  /** Track an HTTP response being satisfied with {@code cacheStrategy}. */
-  void trackResponse(CacheStrategy cacheStrategy);
+    // 跟踪满足缓存策略CacheStrategy的响应
+    void trackResponse(CacheStrategy cacheStrategy);
 }
