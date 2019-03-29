@@ -169,12 +169,12 @@ public final class StreamAllocation {
       if (codec != null) throw new IllegalStateException("codec != null");
       if (canceled) throw new IOException("Canceled");
 
-      // Attempt to use an already-allocated connection. We need to be careful here because our
-      // already-allocated connection may have been restricted from creating new streams.
+
+      // 1、尝试使用已分配的连接
       releasedConnection = this.connection;
       toClose = releaseIfNoNewStreams();
       if (this.connection != null) {
-        // We had an already-allocated connection and it's good.
+        // 当前连接可用.
         result = this.connection;
         releasedConnection = null;
       }
@@ -183,6 +183,7 @@ public final class StreamAllocation {
         releasedConnection = null;
       }
 
+      // 2、尝试从连接池中获取一个连接
       if (result == null) {
         // Attempt to get a connection from the pool.
         Internal.instance.acquire(connectionPool, address, this, null);
@@ -203,7 +204,7 @@ public final class StreamAllocation {
       eventListener.connectionAcquired(call, result);
     }
     if (result != null) {
-      // If we found an already-allocated or pooled connection, we're done.
+      // 如果从连接池中获取到了一个连接，就将其返回.
       return result;
     }
 
@@ -214,15 +215,18 @@ public final class StreamAllocation {
       routeSelection = routeSelector.next();
     }
 
+
     synchronized (connectionPool) {
       if (canceled) throw new IOException("Canceled");
 
       if (newRouteSelection) {
         // Now that we have a set of IP addresses, make another attempt at getting a connection from
         // the pool. This could match due to connection coalescing.
+        // 根据一系列的 IP地址从连接池中获取一个链接
         List<Route> routes = routeSelection.getAll();
         for (int i = 0, size = routes.size(); i < size; i++) {
           Route route = routes.get(i);
+          // 从连接池中获取一个连接
           Internal.instance.acquire(connectionPool, address, this, route);
           if (connection != null) {
             foundPooledConnection = true;
@@ -233,6 +237,7 @@ public final class StreamAllocation {
         }
       }
 
+      // 3、如果连接池中没有可用连接，则创建一个
       if (!foundPooledConnection) {
         if (selectedRoute == null) {
           selectedRoute = routeSelection.next();
@@ -253,7 +258,7 @@ public final class StreamAllocation {
       return result;
     }
 
-    // Do TCP + TLS handshakes. This is a blocking operation.
+    //4、 开始TCP以及TLS握手操作
     result.connect(connectTimeout, readTimeout, writeTimeout, pingIntervalMillis,
         connectionRetryEnabled, call, eventListener);
     routeDatabase().connected(result.route());
@@ -262,7 +267,7 @@ public final class StreamAllocation {
     synchronized (connectionPool) {
       reportedAcquired = true;
 
-      // Pool the connection.
+      // 5、将新创建的连接，放在连接池中.
       Internal.instance.put(connectionPool, result);
 
       // If another multiplexed connection to the same address was created concurrently, then
