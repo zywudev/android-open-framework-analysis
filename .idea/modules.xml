@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/android_source_code_analysis.iml" filepath="$PROJECT_DIR$/.idea/android_source_code_analysis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jdk_1.8/jdk_1.8.iml" filepath="$PROJECT_DIR$/jdk_1.8/jdk_1.8.iml" />
+    </modules>
+  </component>
+</project>
