@@ -3,4 +3,27 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/okhttp/bom/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okcurl/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/samples/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-sse/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-tls/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-tests/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/mockwebserver/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-apache/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-hpacktests/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-dnsoverhttps/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-urlconnection/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-android-support/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-testing-support/pom.xml" />
+        <option value="$PROJECT_DIR$/okhttp/okhttp-logging-interceptor/pom.xml" />
+        <option value="$PROJECT_DIR$/retrofit/retrofit/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 </project>

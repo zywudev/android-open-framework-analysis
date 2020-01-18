@@ -23,6 +23,7 @@ import static retrofit2.Utils.methodError;
 
 abstract class ServiceMethod<T> {
   static <T> ServiceMethod<T> parseAnnotations(Retrofit retrofit, Method method) {
+    // 通过 RequestFactory 解析注解配置（工厂模式、内部使用了建造者模式）
     RequestFactory requestFactory = RequestFactory.parseAnnotations(retrofit, method);
 
     Type returnType = method.getGenericReturnType();
@@ -33,7 +34,7 @@ abstract class ServiceMethod<T> {
     if (returnType == void.class) {
       throw methodError(method, "Service methods cannot return void.");
     }
-
+    // 最终是通过 HttpServiceMethod 构建的请求方法
     return HttpServiceMethod.parseAnnotations(retrofit, method, requestFactory);
   }
 

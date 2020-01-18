@@ -59,13 +59,25 @@ import static retrofit2.Utils.checkNotNull;
  * @author Jake Wharton (jw@squareup.com)
  */
 public final class Retrofit {
+  // 网络请求配置对象，存储网络请求相关的配置，如网络请求的方法、数据转换器、网络请求适配器、网络请求工厂、基地址等
   private final Map<Method, ServiceMethod<?>> serviceMethodCache = new ConcurrentHashMap<>();
 
+  // 网络请求器的工厂：生产网络请求器
   final okhttp3.Call.Factory callFactory;
+
+  // 网络请求的 URL 地址
   final HttpUrl baseUrl;
+
+  // 数据转换器工厂的集合
   final List<Converter.Factory> converterFactories;
+
+  // 网络请求适配器工厂的集合
   final List<CallAdapter.Factory> callAdapterFactories;
+
+  // 回调方法执行器
   final @Nullable Executor callbackExecutor;
+
+  // 是否缓存创建的 ServiceMethod
   final boolean validateEagerly;
 
   Retrofit(okhttp3.Call.Factory callFactory, HttpUrl baseUrl,
@@ -127,11 +139,14 @@ public final class Retrofit {
    */
   @SuppressWarnings("unchecked") // Single-interface proxy creation guarded by parameter safety.
   public <T> T create(final Class<T> service) {
+
+    // 对参数 service 进行校验， service 必须是一个接口，而且没有继承别的接口
     Utils.validateServiceInterface(service);
     // 判断是否需要提前验证
     if (validateEagerly) {
       eagerlyValidateMethods(service);
     }
+    // 利用动态代理技术，自动生成 Api 接口的实现类，将 Api 接口方法中的参数交给 InvocationHandler 处理
     return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[] { service },
         new InvocationHandler() {
           private final Platform platform = Platform.get();
@@ -139,13 +154,15 @@ public final class Retrofit {
 
           @Override public @Nullable Object invoke(Object proxy, Method method,
               @Nullable Object[] args) throws Throwable {
-            // If the method is a method from Object then defer to normal invocation.
+            // Object 类的方法直接调用
             if (method.getDeclaringClass() == Object.class) {
               return method.invoke(this, args);
             }
+            // 如果是对应平台本身类就有的方法，直接调用
             if (platform.isDefaultMethod(method)) {
               return platform.invokeDefaultMethod(method, service, proxy, args);
             }
+            // 否则通过 loadServiceMethod 方法获取到对应 ServiceMethod 并 invoke
             return loadServiceMethod(method).invoke(args != null ? args : emptyArgs);
           }
         });
@@ -161,13 +178,16 @@ public final class Retrofit {
   }
 
   ServiceMethod<?> loadServiceMethod(Method method) {
+    // 1. 先从缓存中获取，如果有则直接返回
     ServiceMethod<?> result = serviceMethodCache.get(method);
     if (result != null) return result;
-
     synchronized (serviceMethodCache) {
+      // 2. 这里又获取一次，原因是网络请求一般是多线程环境下，ServiceMethod 可能创建完成了
       result = serviceMethodCache.get(method);
       if (result == null) {
+        // 3. 解析方法注解，创建 ServiceMethod
         result = ServiceMethod.parseAnnotations(this, method);
+        // 存入缓存
         serviceMethodCache.put(method, result);
       }
     }
@@ -217,6 +237,8 @@ public final class Retrofit {
     checkNotNull(annotations, "annotations == null");
 
     int start = callAdapterFactories.indexOf(skipPast) + 1;
+
+    // 遍历 CallAdapter.Factory 集合寻找合适的工厂(该工厂集合在第一步构造 Retrofit 对象时进行添加)
     for (int i = start, count = callAdapterFactories.size(); i < count; i++) {
       CallAdapter<?, ?> adapter = callAdapterFactories.get(i).get(returnType, annotations, this);
       if (adapter != null) {
@@ -579,18 +601,22 @@ public final class Retrofit {
 
       okhttp3.Call.Factory callFactory = this.callFactory;
       if (callFactory == null) {
+        // 默认使用 OkHttp
         callFactory = new OkHttpClient();
       }
 
       Executor callbackExecutor = this.callbackExecutor;
       if (callbackExecutor == null) {
+        // 默认的 callbackExecutor
         callbackExecutor = platform.defaultCallbackExecutor();
       }
 
+      // 添加你配置的 CallAdapter.Factory 到 List,然后把 Platform 默认的 defaultCallAdapterFactories 添加到 List
       // Make a defensive copy of the adapters and add the default Call adapter.
       List<CallAdapter.Factory> callAdapterFactories = new ArrayList<>(this.callAdapterFactories);
       callAdapterFactories.addAll(platform.defaultCallAdapterFactories(callbackExecutor));
 
+      // 添加 BuiltInConverters 和手动配置的 Converter.Factory 到 List,然后把 Platform 默认的 defaultConverterFactories 添加到 List
       // Make a defensive copy of the converters.
       List<Converter.Factory> converterFactories = new ArrayList<>(
           1 + this.converterFactories.size() + platform.defaultConverterFactoriesSize());
@@ -601,6 +627,7 @@ public final class Retrofit {
       converterFactories.addAll(this.converterFactories);
       converterFactories.addAll(platform.defaultConverterFactories());
 
+      // 返回一个 Retrofit 对象
       return new Retrofit(callFactory, baseUrl, unmodifiableList(converterFactories),
           unmodifiableList(callAdapterFactories), callbackExecutor, validateEagerly);
     }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="crawler" />
+        <module name="guide" />
+        <module name="logging-interceptor" />
+        <module name="mockwebserver" />
+        <module name="okcurl" />
+        <module name="okhttp" />
+        <module name="okhttp-android-support" />
+        <module name="okhttp-apache" />
+        <module name="okhttp-dnsoverhttps" />
+        <module name="okhttp-hpacktests" />
+        <module name="okhttp-sse" />
+        <module name="okhttp-testing-support" />
+        <module name="okhttp-tests" />
+        <module name="okhttp-tls" />
+        <module name="okhttp-urlconnection" />
+        <module name="retrofit" />
+        <module name="simple-client" />
+        <module name="slack" />
+        <module name="static-server" />
+        <module name="unixdomainsockets" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="crawler" target="1.5" />
+      <module name="guide" target="1.5" />
+      <module name="logging-interceptor" target="1.5" />
+      <module name="mockwebserver" target="1.5" />
+      <module name="okcurl" target="1.5" />
+      <module name="okhttp" target="1.5" />
+      <module name="okhttp-android-support" target="1.5" />
+      <module name="okhttp-apache" target="1.5" />
+      <module name="okhttp-bom" target="1.5" />
+      <module name="okhttp-dnsoverhttps" target="1.5" />
+      <module name="okhttp-hpacktests" target="1.5" />
+      <module name="okhttp-sse" target="1.5" />
+      <module name="okhttp-testing-support" target="1.5" />
+      <module name="okhttp-tests" target="1.5" />
+      <module name="okhttp-tls" target="1.5" />
+      <module name="okhttp-urlconnection" target="1.5" />
+      <module name="retrofit" target="1.7" />
+      <module name="sample-parent" target="1.5" />
+      <module name="simple-client" target="1.5" />
+      <module name="slack" target="1.5" />
+      <module name="static-server" target="1.5" />
+      <module name="unixdomainsockets" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

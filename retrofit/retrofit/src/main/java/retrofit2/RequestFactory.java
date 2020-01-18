@@ -161,8 +161,11 @@ final class RequestFactory {
     Builder(Retrofit retrofit, Method method) {
       this.retrofit = retrofit;
       this.method = method;
+      // 获取网络请求接口方法里的注释
       this.methodAnnotations = method.getAnnotations();
+      // 获取网络请求接口方法里的参数类型
       this.parameterTypes = method.getGenericParameterTypes();
+      // 获取网络请求接口方法里的注解内容
       this.parameterAnnotationsArray = method.getParameterAnnotations();
     }
 

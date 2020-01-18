@@ -42,6 +42,7 @@ class Platform {
 
   private static Platform findPlatform() {
     try {
+      // 判断是否是 Android 平台
       Class.forName("android.os.Build");
       if (Build.VERSION.SDK_INT != 0) {
         return new Android();
@@ -49,6 +50,7 @@ class Platform {
     } catch (ClassNotFoundException ignored) {
     }
     try {
+      // Java 平台
       Class.forName("java.util.Optional");
       return new Java8();
     } catch (ClassNotFoundException ignored) {
